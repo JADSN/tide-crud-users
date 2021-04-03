@@ -1,0 +1,96 @@
+digraph bripack_sampleapp_monolith {
+    label = "Monolith\n\n";
+    labelloc=t;
+    rankdir = LR;
+    #bgcolor = "lightgrey"
+
+  subgraph cluster_0 {
+    label = "M0: New_User.exe v1.9";
+    #style=filled;
+    #color="lightgrey";
+    m0_database [shape="cylinder" label="[Blockchain node]\nUsers (RW)\n"];
+    m0_dispatcher [shape="circle" label="dispatcher"];
+    m0_e1 [label="show_profile"];
+    m0_e2 [label="add_user"];
+    m0_e3 [label="update_user"];
+    
+    m0_dispatcher -> m0_e1;
+    m0_dispatcher -> m0_e2;
+    m0_dispatcher -> m0_e3;
+    
+    m0_e1 -> m0_database;
+    m0_e2 -> m0_database;
+    m0_e3 -> m0_database;
+  }
+
+  subgraph cluster_1 {
+    label = "M1: Bookstore.exe v2.1";
+    #style=filled;
+    #color="lightgrey";
+    m1_database [shape="cylinder" label="[Blockchain node]\nBookstore (RW)\nUsers (RO)\n"];
+    m1_dispatcher [shape="circle" label="dispatcher"];
+    m1_e1 [label="show_cart"];
+    m1_e2 [label="add_item"];
+    m1_e3 [label="del_item"];
+    
+    m1_dispatcher -> m1_e1;
+    m1_dispatcher -> m1_e2;
+    m1_dispatcher -> m1_e3;
+    
+    m1_e1 -> m1_database;
+    m1_e2 -> m1_database;
+    m1_e3 -> m1_database;
+  }
+  
+  subgraph cluster_2 {
+    label = "M2: Bookstore.exe v2.2";
+    #style=filled;
+    #color="lightgrey";
+    m2_database [shape="cylinder" label="[Blockchain node]\nBookstore (RW)\nUsers (RO)\n"];
+    m2_dispatcher [shape="circle" label="dispatcher"];
+    m2_e1 [label="show_cart"];
+    m2_e2 [label="add_item"];
+    m2_e3 [label="del_item"];
+    
+    m2_dispatcher -> m2_e1;
+    m2_dispatcher -> m2_e2;
+    m2_dispatcher -> m2_e3;
+    
+    m2_e1 -> m2_database;
+    m2_e2 -> m2_database;
+    m2_e3 -> m2_database;
+  }
+  
+  // Nodes
+  frontend [shape="square"];
+  portal [shape="rectangle" label="Portal"];    
+  blockchain_node_1 [shape="cylinder" label="Databases\n-Bookstore\n(Blockchain node)"];
+  blockchain_node_2 [shape="cylinder" label="Databases\n-Users\n(Blockchain node)"];
+  blockchain_node_3 [shape="cylinder" label="Databases\n-Bookstore\n-Users\n(Blockchain node)\nCONSOLIDATION #1"];
+  blockchain_node_4 [shape="cylinder" label="Databases\n-Bookstore\n-Users\n(Blockchain node)\nCONSOLIDATION #2"];
+  
+  // Edges
+  frontend -> portal;
+  portal -> m0_dispatcher;
+  portal -> m1_dispatcher;
+  portal -> m2_dispatcher;
+
+  m0_database -> blockchain_node_1 [arrowhead="none" color="blue"];
+  m1_database -> blockchain_node_1 [arrowhead="none" color="blue"];
+  m2_database -> blockchain_node_1 [arrowhead="none" color="blue"];
+  m0_database -> blockchain_node_2 [arrowhead="none" color="red"];
+  m1_database -> blockchain_node_2 [arrowhead="none" color="red"];
+  m2_database -> blockchain_node_2 [arrowhead="none" color="red"];
+  //blockchain_node_1 -> blockchain_node_2 [arrowhead="none" color="green"];
+  blockchain_node_1 -> blockchain_node_3 [arrowhead="none" color="green"];
+  blockchain_node_2 -> blockchain_node_3 [arrowhead="none" color="green"];
+  blockchain_node_1 -> blockchain_node_4 [arrowhead="none" color="green"];
+  blockchain_node_2 -> blockchain_node_4 [arrowhead="none" color="green"];
+    blockchain_node_3 -> blockchain_node_4 [arrowhead="none" color="green"];
+  // m0_database -> m1_database [arrowhead="none"];
+  // m0_database -> m2_database [arrowhead="none"];
+  // m1_database -> m2_database [arrowhead="none"];
+
+  
+  
+}

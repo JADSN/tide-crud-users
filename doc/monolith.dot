@@ -1,0 +1,29 @@
+digraph bripack_sampleapp_monolith {
+    label = "Monolith\n\n";
+    labelloc=t;
+    rankdir = LR;
+    #bgcolor = "lightgrey"
+
+  subgraph cluster_0 {
+    #label = "";
+    #style=filled;
+    #color="lightgrey";
+    database [shape="cylinder"];
+    dispatcher [shape="circle"];
+    e1 [label="show_users"];
+    e2 [label="add_user"];
+    e3 [label="del_user"];
+    
+    dispatcher -> e1;
+    dispatcher -> e2;
+    dispatcher -> e3;
+    
+    e1 -> database;
+    e2 -> database;
+    e3 -> database;
+  }
+      
+  frontend -> dispatcher;
+  frontend [shape="square"];
+  
+}

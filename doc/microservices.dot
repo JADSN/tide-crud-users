@@ -1,0 +1,53 @@
+digraph bripack_sampleapp_microservice {
+    label = "Microservice\n\n";
+    labelloc=t;
+    rankdir = LR;
+    #bgcolor = "lightgrey"
+
+  subgraph cluster_0 {
+    label = "Portal";
+    style="filled";
+    #color="lightgrey";
+    #database [shape="cylinder"];
+    dispatcher [shape="circle"];
+    e1 [label="/show_users"];
+    e2 [label="/add_user"];
+    e3 [label="/del_user"];
+    
+    dispatcher -> e1;
+    dispatcher -> e2;
+    dispatcher -> e3;
+    
+  }
+  subgraph cluster_1 {
+    label = "Microservices";
+    #style="filled";
+    
+    color="cornflowerblue";
+    node [shape="rectangle"];
+    api_gateway;
+    m1_1 [label="M1_1: show_users\n(small)" style="dashed" color="red";];
+    m1_2 [label="M1_2: show_users\n(small)" style="dashed" color="red";];
+    m2 [label="M2: add_user\n(small)"];
+    m3 [label="M3: del_user\n(small)"];
+    database [shape="cylinder"];
+
+    api_gateway -> m1_1;
+    api_gateway -> m1_2;
+    api_gateway -> m2;
+    api_gateway -> m3;
+    m1_1 -> database;
+    m1_2 -> database;
+    m2 -> database;
+    m3 -> database;
+    
+  }
+
+    e1 -> api_gateway;
+    e2 -> api_gateway;
+    e3 -> api_gateway;
+      
+  frontend -> dispatcher;
+  frontend [shape="square"];
+  
+}
