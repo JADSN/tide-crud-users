@@ -30,4 +30,4 @@ $ make release run
 
 ---
 
-[![Dependencies Status](https://deps.rs/repo/github/afsec/brickpack-sampleapp/status.svg)](https://deps.rs/repo/github/afsec/brickpack-sampleapp)
+[![Dependencies Status](https://deps.rs/repo/github/afsec/tide_crud_users_sqlite/status.svg)](https://deps.rs/repo/github/afsec/tide_crud_users_sqlite)
