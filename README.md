@@ -1,31 +1,25 @@
-# BrickPack SampleApp
+# Tide CRUD Users
 
-A sample CNA (Cloud Native Application)/Microservice writen using brickpack: https://github.com/afsec/brickpack
+Just a Rust CRUD powered by rusSQLite, r2d2_sqlite and tide-rs.
 
 ## Lean artifact (< 10 MB)
-The whole microservice is built with static compiling using **MUSL** target.
+The whole artifact is built with static compiling using **MUSL** target.
 ```
 $ ls -lh
-total 2,3M
--rwxrwxr-x 1 user user 2,3M nov 30 20:15 brickpack-sampleapp
+total 4,1M
+-rwxrwxr-x 1 user user 4,1M abr  3 16:54 tide-crud-users
 ```
 
 ## Startup message
 ```
 $ make release run
 ./scripts/build.sh
-   Compiling brickpack v0.9.5 (/home/user/src/brickpack/brickpack)
-   Compiling brickpack-sampleapp v0.1.0 (/home/user/src/brickpack-sampleapp)
-[brickpack_derive] Endpoint detected: (endpoint_name = add_user)
-[brickpack_derive] Endpoint detected: (endpoint_name = del_user)
-[brickpack_derive] Endpoint detected: (endpoint_name = show_users)
-    Finished release [optimized] target(s) in 22.17s
-'./target/x86_64-unknown-linux-musl/release/brickpack-sampleapp' -> './dist/brickpack-sampleapp'
+    Finished release [optimized] target(s) in 0.11s
+'./target/x86_64-unknown-linux-musl/release/tide-crud-users' -> './dist/tide-crud-users'
 ./scripts/run.sh
-{"level":30,"time":1606862446886,"msg":"Logger started","level":Info}
-{"level":30,"time":1606862446886,"msg":"Starting App [brickpack-sampleapp v0.1.0]:"}
-{"level":30,"time":1606862446886,"msg":"Powered by Brickpack Web Framework v0.9.5"}
-{"level":30,"time":1606862446887,"msg":"Server listening on http://127.0.0.1:8080"}
+{"level":30,"time":1617479671289,"msg":"Logger started","level":Info}
+{"level":30,"time":1617479671290,"msg":"Starting App [tide-crud-users v0.3.10]:"}
+{"level":30,"time":1617479671290,"msg":"Server listening on http://127.0.0.1:8080"}
 ```
 
 ---
