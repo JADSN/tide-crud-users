@@ -36,11 +36,6 @@ async fn main() -> tide::Result<()> {
     log::start();
 
     log::info!("Starting App [{} v{}]:", MyApp.name(), MyApp.version());
-    log::info!(
-        "Powered by {} v{}",
-        MyApp.powered_desc(),
-        MyApp.powered_ver()
-    );
 
     let database_connection = match database::DatabaseConnection::new() {
         Ok(db_conn) => db_conn,
