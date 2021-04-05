@@ -15,7 +15,7 @@ impl DatabaseConnection {
 
         conn.execute_batch("PRAGMA journal_mode=WAL")?;
         conn.execute_batch("PRAGMA foreign_keys=ON")?;
-        if let Err(error) = conn.execute_batch("SELECT * from `users`") {
+        if let Err(error) = conn.execute_batch("SELECT COUNT(*) from `users`") {
             tide::log::warn!("{}", error);
             
             tide::log::warn!("Creating table `users`");

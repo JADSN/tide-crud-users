@@ -10,7 +10,6 @@ use app::App;
 use clap::{crate_authors, crate_description, App as ClapApp};
 use tide::log;
 
-
 struct MyApp;
 impl App for MyApp {
     fn name(&self) -> &'static str {
@@ -53,20 +52,16 @@ async fn main() -> tide::Result<()> {
     app.at("/api/:endpoint")
         .post(crate::api::dispatcher::handler);
 
-    #[cfg(debug_assertions)]
-    println!(
-        r#"
+    let banner_listen = r#"
   Internal Endpoints:
     /                - index_page
     /maintenance     - maintenance
     /auth            - check_auth
   
-  Endpoints:
-    /api/add_user    - Users: Create
-    /api/show_users  - Users: Read all
-    /api/del_user    - Users: Delete
-"#
-    );
+  Endpoints:"#;
+    println!("{}", banner_listen);
+    // TODO: Implement using build.rs
+    println!(include_str!("../banner_listen.txt"));
 
     app.listen(listen).await?;
     Ok(())

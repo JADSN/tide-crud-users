@@ -1,0 +1,2 @@
+    /api/add_user - AddUser
+    /api/show_users - ShowUsers
