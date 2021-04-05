@@ -1,32 +1,32 @@
-use super::{outcome::InternalMessage, AddUser};
-
-use brickpack::endpoint::{Name, View};
-
 use serde_json::to_string as serde_json_to_string;
-use tide::{
-    http::mime, log, prelude::Serialize, Error as TideError, Response, Result as TideResult,
-    StatusCode,
+use tide::{http::mime, log, prelude::Serialize, Error as TideError, Response, StatusCode};
+
+use crate::{
+    api::{MvpError, MvpResult},
+    endpoint::{Name, View},
 };
 
+use super::{outcome::InternalMessage, AddUser};
+
 #[derive(Serialize)]
-struct ResponseBodyOk {
-    id: InternalMessage,
+struct ResponseBodyError {
+    status: String,
+    description: String,
 }
 
-impl View<InternalMessage, TideError, TideResult> for AddUser {
-    fn view(&self, result: Result<InternalMessage, TideError>) -> TideResult {
+impl View<InternalMessage, MvpError, MvpResult> for AddUser {
+    fn view(&self, result: Result<InternalMessage, MvpError>) -> MvpResult {
         match result {
             Ok(outcome) => {
-                let response_body = ResponseBodyOk { id: outcome };
-                let json_body = serde_json_to_string(&response_body).unwrap_or("".to_owned());
-                Ok(Response::builder(StatusCode::Ok)
+                let json_body = serde_json_to_string(&outcome).unwrap_or("".to_owned());
+                MvpResult(Ok(Response::builder(StatusCode::Ok)
                     .content_type(mime::JSON)
                     .body(json_body)
-                    .build())
+                    .build()))
             }
             Err(error) => {
-                log::error!(r#"Endpoint [{}]: {}"#, self.name(), error);
-                Err(TideError::from(error))
+                log::error!(r#"Endpoint [{}]: {:?}"#, self.name(), error);
+                MvpResult(Err(TideError::from(error.take_error())))
             }
         }
     }

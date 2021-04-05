@@ -1,21 +1,17 @@
 use tide::Error as TideError;
 
+use crate::api::MvpError;
+use crate::database::DatabaseConnection;
 use crate::endpoint::Model;
 
-use crate::database::DatabaseConnection;
+use super::{outcome::InternalMessage, ShowUsers};
 
-use super::{
-    outcome::{InternalMessage, MyError},
-    ShowUsers,
-};
-
-
-impl Model<DatabaseConnection, InternalMessage, MyError> for ShowUsers {
+impl Model<DatabaseConnection, InternalMessage, MvpError> for ShowUsers {
     fn model(
         &self,
         db_connection: &DatabaseConnection,
         request_body: &String,
-    ) -> Result<InternalMessage, MyError> {
+    ) -> Result<InternalMessage, MvpError> {
         use crate::endpoint::Name;
         use std::convert::TryFrom;
         use tide::{log, StatusCode};
@@ -29,7 +25,7 @@ impl Model<DatabaseConnection, InternalMessage, MyError> for ShowUsers {
                 // * Security: Custom error to verify if system is under attack.
                 let status_code = StatusCode::BadRequest;
                 log::warn!("VIOLATION: Endpoint /{} is under attack!", self.name());
-                Err(MyError(TideError::from_str(
+                Err(MvpError(TideError::from_str(
                     status_code,
                     status_code.to_string(),
                 )))

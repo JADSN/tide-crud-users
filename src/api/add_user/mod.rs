@@ -2,24 +2,30 @@ mod model;
 mod outcome;
 mod view;
 
-use tide::{Error as TideError, Result as TideResult};
-
-use brickpack::{
-    build_presenter,
-    endpoint::{Endpoint, Name, Presenter},
+use crate::{
+    api::{MvpError, MvpResult},
+    database::DatabaseConnection,
+    endpoint::{Endpoint, Handler, Name, Presenter},
 };
-
-use brickpack_derive::Endpoint;
 
 use outcome::InternalMessage;
 
-// TODO: Verify all pathway `src/api/MODULE_NAME/` using module
-// let path = module_path!();
-// println!("{}", path);
-
 // Endpoint definition
-#[derive(Debug, Endpoint)]
-#[endpoint_name = "add_user"]
-struct AddUser;
+#[derive(Debug)]
+pub struct AddUser;
 
-build_presenter!(AddUser, InternalMessage, TideError, TideResult);
+impl Endpoint for AddUser {}
+
+impl Name for AddUser {
+    fn name(&self) -> &'static str {
+        module_path!()
+            .split("::")
+            .collect::<Vec<&str>>()
+            .last()
+            .unwrap()
+    }
+}
+
+impl Presenter<AddUser, DatabaseConnection, InternalMessage, MvpError, MvpResult> for AddUser {}
+
+impl Handler<AddUser, DatabaseConnection, InternalMessage, MvpError, MvpResult> for AddUser {}

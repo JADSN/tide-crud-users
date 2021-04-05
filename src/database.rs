@@ -1,7 +1,11 @@
+use crate::endpoint::EndpointDbConnection;
+
 pub type SqlitePool = r2d2::Pool<r2d2_sqlite::SqliteConnectionManager>;
 pub type SqlitePooledConnection = r2d2::PooledConnection<r2d2_sqlite::SqliteConnectionManager>;
 #[derive(Debug, Clone)]
 pub struct DatabaseConnection(SqlitePool);
+
+impl EndpointDbConnection for DatabaseConnection {}
 
 impl DatabaseConnection {
     fn bootstrap(&self) -> Result<(), DbError> {

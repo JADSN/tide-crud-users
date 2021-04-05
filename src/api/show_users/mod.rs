@@ -2,15 +2,20 @@ mod model;
 mod outcome;
 mod view;
 
-use crate::database::DatabaseConnection;
-use crate::endpoint::{Endpoint, Name, Presenter};
+use crate::{
+    api::{MvpError, MvpResult},
+    database::DatabaseConnection,
+    endpoint::{Endpoint, Handler, Name, Presenter},
+};
 
-use outcome::{InternalMessage, MyError, MyResult};
+use outcome::InternalMessage;
 
 // Endpoint definition
 #[derive(Debug)]
-struct ShowUsers;
+pub struct ShowUsers;
+
 impl Endpoint for ShowUsers {}
+
 impl Name for ShowUsers {
     fn name(&self) -> &'static str {
         module_path!()
@@ -21,8 +26,6 @@ impl Name for ShowUsers {
     }
 }
 
-impl Presenter<ShowUsers, DatabaseConnection, InternalMessage, MyError, MyResult> for ShowUsers {}
+impl Presenter<ShowUsers, DatabaseConnection, InternalMessage, MvpError, MvpResult> for ShowUsers {}
 
-pub fn handler(db_connection: &DatabaseConnection, request_body: &String) -> tide::Result {
-    ShowUsers::presenter(ShowUsers, db_connection, request_body).get()
-}
+impl Handler<ShowUsers, DatabaseConnection, InternalMessage, MvpError, MvpResult> for ShowUsers {}

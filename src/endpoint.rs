@@ -44,3 +44,15 @@ where
     }
 }
 
+pub trait Handler<T, D, O, E, R>
+where
+    T: Presenter<T, D, O, E, R> + Endpoint + Name + Model<D, O, E> + View<O, E, R>,
+    D: EndpointDbConnection,
+    O: Outcome,
+    E: EndpointError,
+    R: EndpointResult + Into<tide::Result>,
+{
+    fn handler(endpoint: T, db_connection: &D, request_body: &String) -> tide::Result {
+        T::presenter(endpoint, db_connection, request_body).into()
+    }
+}

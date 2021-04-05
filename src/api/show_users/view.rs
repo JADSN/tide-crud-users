@@ -1,12 +1,12 @@
-use super::{
-    outcome::{InternalMessage, MyError, MyResult},
-    ShowUsers,
-};
-
-use crate::endpoint::{Name, View};
-
 use serde_json::to_string as serde_json_to_string;
 use tide::{http::mime, log, prelude::Serialize, Error as TideError, Response, StatusCode};
+
+use crate::{
+    api::{MvpError, MvpResult},
+    endpoint::{Name, View},
+};
+
+use super::{outcome::InternalMessage, ShowUsers};
 
 #[derive(Serialize)]
 struct ResponseBodyError {
@@ -14,19 +14,19 @@ struct ResponseBodyError {
     description: String,
 }
 
-impl View<InternalMessage, MyError, MyResult> for ShowUsers {
-    fn view(&self, result: Result<InternalMessage, MyError>) -> MyResult {
+impl View<InternalMessage, MvpError, MvpResult> for ShowUsers {
+    fn view(&self, result: Result<InternalMessage, MvpError>) -> MvpResult {
         match result {
             Ok(outcome) => {
                 let json_body = serde_json_to_string(&outcome).unwrap_or("".to_owned());
-                MyResult(Ok(Response::builder(StatusCode::Ok)
+                MvpResult(Ok(Response::builder(StatusCode::Ok)
                     .content_type(mime::JSON)
                     .body(json_body)
                     .build()))
             }
             Err(error) => {
                 log::error!(r#"Endpoint [{}]: {:?}"#, self.name(), error);
-                MyResult(Err(TideError::from(error.0)))
+                MvpResult(Err(TideError::from(error.take_error())))
             }
         }
     }

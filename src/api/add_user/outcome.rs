@@ -1,11 +1,9 @@
 use std::convert::TryFrom;
 
-use brickpack::endpoint::Outcome;
-use brickpack_derive::Outcome;
+use crate::{api::MvpError, database::DatabaseConnection, endpoint::Outcome};
 
-use rusqlite::{params, Connection};
+use rusqlite::params;
 use serde::{Deserialize, Serialize};
-use tide::Error as TideError;
 
 #[derive(Debug, Deserialize)]
 pub struct NewUser {
@@ -16,18 +14,13 @@ pub struct NewUser {
 }
 
 // Outcome definition
-#[derive(Debug, Outcome, Serialize)]
+#[derive(Debug, Serialize)]
 pub struct InternalMessage(u16);
 
-// impl InternalMessage {
-//     pub fn get(&self) -> u16 {
-//         self.0
-//     }
-// }
+impl Outcome for InternalMessage {}
 
 impl TryFrom<i64> for InternalMessage {
-    // type Error = &'static str;
-    type Error = TideError;
+    type Error = MvpError;
 
     fn try_from(value: i64) -> Result<Self, Self::Error> {
         use std::convert::TryInto;
@@ -37,7 +30,11 @@ impl TryFrom<i64> for InternalMessage {
 }
 
 impl InternalMessage {
-    pub fn db_adduser(mut conn: Connection, new_user: &NewUser) -> rusqlite::Result<i64> {
+    pub fn db_adduser(
+        db_connection: &DatabaseConnection,
+        new_user: &NewUser,
+    ) -> Result<i64, MvpError> {
+        let mut conn = db_connection.get()?;
         let tx = conn.transaction()?;
 
         tx.execute(
