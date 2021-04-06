@@ -34,9 +34,24 @@ impl ParsedUser {
 }
 
 // Outcome definition
-#[derive(Debug, Serialize)]
-pub struct InternalMessage(u16);
+#[derive(Debug, Serialize, Default)]
+pub struct InternalMessage {
+    updated_fields: u16,
+}
+// impl InternalMessage {
+//     pub fn new() -> Self {
+//         InternalMessage::default()
 
+//     }
+// }
+
+impl From<u16> for InternalMessage {
+    fn from(data: u16) -> Self {
+        InternalMessage {
+            updated_fields: data,
+        }
+    }
+}
 impl Outcome for InternalMessage {}
 
 impl TryFrom<i64> for InternalMessage {
@@ -44,8 +59,8 @@ impl TryFrom<i64> for InternalMessage {
 
     fn try_from(value: i64) -> Result<Self, Self::Error> {
         use std::convert::TryInto;
-        let id = value.try_into()?;
-        Ok(InternalMessage(id))
+        let id: u16 = value.try_into()?;
+        Ok(InternalMessage::from(id))
     }
 }
 
