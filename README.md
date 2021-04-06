@@ -9,6 +9,8 @@ $ ls -lh ./dist/
 total 4,2M                                                                                    
 -rw-r--r-- 1 user user  16K abr  6 15:36 database.sqlite3
 -rwxrwxr-x 1 user user 4,2M abr  6 15:52 tide-crud-users
+$ ldd ./dist/tide-crud-users 
+        statically linked
 $
 ```
 
