@@ -33,6 +33,7 @@ $ ./tide-crud-users -e
     /api/show_user - ShowUser
     /api/show_users - ShowUsers
     /api/update_user - UpdateUser
+$
 ```
 
 ---
