@@ -11,6 +11,7 @@ pub struct ParsedUser {
     email: Option<String>,
     department: Option<u16>,
     permission: Option<u16>,
+    status: Option<u16>
 }
 
 impl ParsedUser {
@@ -28,6 +29,9 @@ impl ParsedUser {
     }
     pub fn permission(&self) -> Option<u16> {
         self.permission
+    }
+    pub fn status(&self) -> Option<u16> {
+        self.status
     }
 }
 
@@ -93,6 +97,16 @@ impl InternalMessage {
             tx.execute(
                 "UPDATE `users` SET permission = ?2 WHERE id = ?1;",
                 params![parsed_user.id(), permission],
+            )?;
+            affected_fields += 1;
+        }
+
+        if let Some(status) = parsed_user.status() {
+            let id = parsed_user.id();
+            log::debug!("Updating field: id = {} status = {}", id, &status);
+            tx.execute(
+                "UPDATE `users` SET status = ?2 WHERE id = ?1;",
+                params![parsed_user.id(), status],
             )?;
             affected_fields += 1;
         }
