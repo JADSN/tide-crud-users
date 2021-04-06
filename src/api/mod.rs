@@ -4,6 +4,7 @@ pub mod dispatcher;
 
 mod add_user;
 mod show_users;
+mod show_user;
 mod update_user;
 
 // * Endpoint modules - END

@@ -59,6 +59,7 @@ async fn main() -> tide::Result<()> {
     /auth            - check_auth
   
   Endpoints:"#;
+//   banner_listen::banner_listen()
     println!("{}", banner_listen);
     // TODO: Implement using build.rs
     println!(include_str!("../banner_listen.txt"));
