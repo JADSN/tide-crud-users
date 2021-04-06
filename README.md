@@ -12,7 +12,8 @@ total 4,1M
 
 ## Startup message
 ```
-$ LOG_LEVEL=DEBUG ./tide-crud-users{"level":30,"time":1617734910475,"msg":"Logger started","level":DEBUG}
+$ LOG_LEVEL=DEBUG ./tide-crud-users
+{"level":30,"time":1617734910475,"msg":"Logger started","level":DEBUG}
 {"level":30,"time":1617734910475,"msg":"Starting App [tide-crud-users v0.4.0]:"}
 {"level":30,"time":1617734910478,"msg":"Server listening on http://127.0.0.1:8080"}
 ```
