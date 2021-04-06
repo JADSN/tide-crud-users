@@ -4,12 +4,9 @@ use crate::api::MvpError;
 use crate::database::DatabaseConnection;
 use crate::endpoint::Model;
 
-use super::{
-    outcome::{InternalMessage, Paging},
-    ShowUsers,
-};
+use super::{outcome::InternalMessage, ExportUsers};
 
-impl Model<DatabaseConnection, InternalMessage, MvpError> for ShowUsers {
+impl Model<DatabaseConnection, InternalMessage, MvpError> for ExportUsers {
     fn model(
         &self,
         db_connection: &DatabaseConnection,
@@ -18,21 +15,23 @@ impl Model<DatabaseConnection, InternalMessage, MvpError> for ShowUsers {
         use crate::endpoint::Name;
         use std::convert::TryFrom;
         use tide::{log, StatusCode};
-        let paging: Paging = match serde_json::from_str(&request_body) {
-            Ok(paging_settings) => paging_settings,
-            Err(error) => {
+        match request_body.as_str() {
+            // TODO: Add paginator (Check dbeaver)
+            // TODO: Current endpoint could be export_users
+            "{}" => {
+                let retrieved_users = InternalMessage::retrieve_users(db_connection)?;
+                log::info!("Found [{}] users!", retrieved_users.len());
+                InternalMessage::try_from(retrieved_users)
+            }
+            _ => {
                 // * Security: Custom error to verify if system is under attack.
                 let status_code = StatusCode::BadRequest;
                 log::warn!("VIOLATION: Endpoint /{} is under attack!", self.name());
-                log::error!("DEBUG_SERDE: {} ", error);
-                return Err(MvpError(TideError::from_str(
+                Err(MvpError(TideError::from_str(
                     status_code,
                     status_code.to_string(),
-                )));
+                )))
             }
-        };
-        let retrieved_users = InternalMessage::retrieve_users(db_connection,paging)?;
-        log::info!("Found [{}] users!", retrieved_users.len());
-        InternalMessage::try_from(retrieved_users)
+        }
     }
 }
