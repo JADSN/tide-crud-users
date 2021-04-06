@@ -26,11 +26,12 @@ impl DatabaseConnection {
             "name"	TEXT NOT NULL,
             "department"	INTEGER NOT NULL,
             "permission"	INTEGER NOT NULL,
+            "status"	INTEGER NOT NULL,
             "deleted" INTEGER NOT NULL
         );
-        INSERT INTO `users` ("email","name","department","permission","deleted") VALUES ('root@example.net','Charlie Root',1,1,0);
-        INSERT INTO `users` ("email","name","department","permission","deleted") VALUES ('admin@example.net','Administrator',1,2,0);
-        INSERT INTO `users` ("email","name","department","permission","deleted") VALUES ('staff@example.net','Staff',1,3,0);
+        INSERT INTO `users` ("email","name","department","permission","status","deleted") VALUES ('root@example.net','Charlie Root',1,1,1,0);
+        INSERT INTO `users` ("email","name","department","permission","status","deleted") VALUES ('admin@example.net','Administrator',1,2,1,0);
+        INSERT INTO `users` ("email","name","department","permission","status","deleted") VALUES ('staff@example.net','Staff',1,3,1,0);
         "#)?;
         }
         if let Err(error) = conn.execute_batch("SELECT COUNT(*) from `departments`") {

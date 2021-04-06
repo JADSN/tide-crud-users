@@ -11,8 +11,22 @@ pub struct NewUser {
     email: String,
     department: u16,
     permission: u16,
+    #[serde(skip_deserializing, default)]
+    status: UserStatus,
 }
 
+#[derive(Debug, Deserialize)]
+pub struct UserStatus(u16);
+impl Default for UserStatus {
+    fn default() -> Self {
+        UserStatus(1)
+    }
+}
+impl UserStatus {
+    fn get(&self) -> u16 {
+        self.0
+    }
+}
 // Outcome definition
 #[derive(Debug, Serialize)]
 pub struct InternalMessage(u16);
@@ -44,12 +58,13 @@ impl InternalMessage {
         let tx = conn.transaction()?;
 
         tx.execute(
-            "INSERT INTO users (email, name, department, permission) VALUES (?1, ?2, ?3, ?4)",
+            "INSERT INTO users (email, name, department, permission, status, deleted ) VALUES (?1, ?2, ?3, ?4, ?5, 0)",
             params![
                 new_user.email,
                 new_user.name,
                 new_user.department,
-                new_user.permission
+                new_user.permission,
+                new_user.status.get()
             ],
         )?;
 
