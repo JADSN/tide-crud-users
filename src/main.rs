@@ -63,7 +63,13 @@ fn show_endpoints() {
 
 async fn start_tide_server() -> tide::Result<()> {
     let addr = "127.0.0.1";
-    let port = "8080";
+    let mut port: String = "8080".into();
+    
+    if let Ok(value) = std::env::var("PORT") {
+        let port_number = value.parse::<u16>()?;
+        port = port_number.to_string();
+    }
+
     let listen = format!("{}:{}", addr, port);
 
     start_tide_log();

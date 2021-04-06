@@ -1,6 +1,9 @@
     /api/add_user - AddUser
     /api/delete_user - DeleteUser
     /api/export_users - ExportUsers
+    /api/show_departments - ShowDepartments
+    /api/show_permissions - ShowPermissions
+    /api/show_statuses - ShowStatuses
     /api/show_user - ShowUser
     /api/show_users - ShowUsers
     /api/update_user - UpdateUser

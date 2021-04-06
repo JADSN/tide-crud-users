@@ -8,6 +8,9 @@ mod export_users;
 mod show_user;
 mod update_user;
 mod delete_user;
+mod show_departments;
+mod show_permissions;
+mod show_statuses;
 
 // * Endpoint modules - END
 
