@@ -42,56 +42,50 @@ impl PagingOffset {
 // Serde struct - END
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct User {
+pub struct Department {
     pub id: u16,
     pub name: String,
-    pub email: String,
-    pub department: u16,
-    pub permission: u16,
     pub deleted: bool
 }
 
 // Outcome definition
 #[derive(Debug, Serialize)]
-pub struct InternalMessage(Vec<User>);
+pub struct InternalMessage(Vec<Department>);
 impl Outcome for InternalMessage {}
 
-impl TryFrom<Vec<User>> for InternalMessage {
+impl TryFrom<Vec<Department>> for InternalMessage {
     type Error = MvpError;
 
-    fn try_from(data: Vec<User>) -> Result<Self, Self::Error> {
+    fn try_from(data: Vec<Department>) -> Result<Self, Self::Error> {
         Ok(InternalMessage(data))
     }
 }
 
 impl InternalMessage {
-    pub fn retrieve_users(
+    pub fn retrieve_departments(
         db_connection: &DatabaseConnection,
         paging: Paging,
-    ) -> Result<Vec<User>, MvpError> {
+    ) -> Result<Vec<Department>, MvpError> {
         let conn = db_connection.get()?;
-        let mut stmt = conn.prepare("SELECT * FROM users LIMIT ?1 OFFSET ?2")?;
-        let retrieved_users =
+        let mut stmt = conn.prepare("SELECT * FROM departments LIMIT ?1 OFFSET ?2")?;
+        let retrieved_departments =
             stmt.query_map(params![paging.limit.get(), paging.offset.get()], |row| {
-                let deleted_column: u8 = row.get(5)?;
-                Ok(User {
+                let deleted_column: u8 = row.get(2)?;
+                Ok(Department {
                     id: row.get(0)?,
-                    email: row.get(1)?,
-                    name: row.get(2)?,
-                    department: row.get(3)?,
-                    permission: row.get(4)?,
+                    name: row.get(1)?,
                     deleted: deleted_column > 0,
                 })
             })?;
 
-        let mut users: Vec<User> = Vec::new();
+        let mut departments: Vec<Department> = Vec::new();
 
-        for row in retrieved_users {
+        for row in retrieved_departments {
             if let Ok(user) = row {
-                users.push(user);
+                departments.push(user);
             }
         }
 
-        Ok(users)
+        Ok(departments)
     }
 }
