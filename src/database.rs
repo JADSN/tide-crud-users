@@ -17,8 +17,7 @@ impl DatabaseConnection {
         conn.execute_batch("PRAGMA foreign_keys=ON")?;
         if let Err(error) = conn.execute_batch("SELECT COUNT(*) from `users`") {
             tide::log::warn!("{}", error);
-            
-            tide::log::warn!("Creating table `users`");
+            tide::log::warn!("Creating tables `users`");
             conn.execute_batch(
         r#"
         CREATE TABLE `users` (
@@ -32,8 +31,55 @@ impl DatabaseConnection {
         INSERT INTO `users` ("email","name","department","permission","deleted") VALUES ('root@example.net','Charlie Root',1,1,0);
         INSERT INTO `users` ("email","name","department","permission","deleted") VALUES ('admin@example.net','Administrator',1,2,0);
         INSERT INTO `users` ("email","name","department","permission","deleted") VALUES ('staff@example.net','Staff',1,3,0);
+        "#)?;
+        }
+        if let Err(error) = conn.execute_batch("SELECT COUNT(*) from `departments`") {
+            tide::log::warn!("{}", error);
+            tide::log::warn!("Creating tables `departments`");
+            conn.execute_batch(
+                r#"
+        CREATE TABLE `departments` (
+            "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+            "name"	TEXT NOT NULL,
+            "deleted" INTEGER NOT NULL
+        );
+        INSERT INTO `departments` ("id","name","deleted") VALUES (1,'IT',0);
+        INSERT INTO `departments` ("id","name","deleted") VALUES (2,'Accounting',0);
+        INSERT INTO `departments` ("id","name","deleted") VALUES (3,'Marketing',0);
+        "#,
+            )?;
+        }
+        if let Err(error) = conn.execute_batch("SELECT COUNT(*) from `permissions`") {
+            tide::log::warn!("{}", error);
+            tide::log::warn!("Creating tables `permissions`");
+            conn.execute_batch(
+                r#"
+        CREATE TABLE `permissions` (
+            "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+            "name"	TEXT NOT NULL,
+            "deleted" INTEGER NOT NULL
+        );
+        INSERT INTO `permissions` ("id","name","deleted") VALUES (1,'Administrator',0);
+        INSERT INTO `permissions` ("id","name","deleted") VALUES (2,'Technical',0);
+        INSERT INTO `permissions` ("id","name","deleted") VALUES (3,'User',0);  
+        "#,
+            )?;
+        }
+        if let Err(error) = conn.execute_batch("SELECT COUNT(*) from `statuses`") {
+            tide::log::warn!("{}", error);
+            tide::log::warn!("Creating tables `statuses`");
+            conn.execute_batch(
+                r#"
+        CREATE TABLE `statuses` (
+            "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+            "name"	TEXT NOT NULL,
+            "deleted" INTEGER NOT NULL
+        );
+        INSERT INTO `statuses` ("id","name","deleted") VALUES (1,'Enabled',0);
+        INSERT INTO `statuses` ("id","name","deleted") VALUES (2,'Disabled',0);
+        INSERT INTO `statuses` ("id","name","deleted") VALUES (3,'Blocked',0);  
     "#,
-    )?;
+            )?;
         }
 
         // TODO: Check if PRAGMAs was applied
