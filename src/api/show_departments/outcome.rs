@@ -45,7 +45,7 @@ impl PagingOffset {
 pub struct Department {
     pub id: u16,
     pub name: String,
-    pub deleted: bool
+    pub deleted: bool,
 }
 
 // Outcome definition
@@ -67,7 +67,8 @@ impl InternalMessage {
         paging: Paging,
     ) -> Result<Vec<Department>, MvpError> {
         let conn = db_connection.get()?;
-        let mut stmt = conn.prepare("SELECT * FROM departments LIMIT ?1 OFFSET ?2")?;
+        let mut stmt =
+            conn.prepare("SELECT id, name, deleted FROM `departments` WHERE deleted = 0 LIMIT ?1 OFFSET ?2;")?;
         let retrieved_departments =
             stmt.query_map(params![paging.limit.get(), paging.offset.get()], |row| {
                 let deleted_column: u8 = row.get(2)?;

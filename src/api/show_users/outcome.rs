@@ -49,7 +49,7 @@ pub struct User {
     pub department: u16,
     pub permission: u16,
     pub status: u16,
-    pub deleted: bool
+    // pub deleted: bool,
 }
 
 // Outcome definition
@@ -71,10 +71,10 @@ impl InternalMessage {
         paging: Paging,
     ) -> Result<Vec<User>, MvpError> {
         let conn = db_connection.get()?;
-        let mut stmt = conn.prepare("SELECT * FROM users LIMIT ?1 OFFSET ?2")?;
+        let mut stmt = conn.prepare("SELECT id, email, name, department, permission, status, deleted FROM `users` WHERE deleted = 0 LIMIT ?1 OFFSET ?2;")?;
         let retrieved_users =
             stmt.query_map(params![paging.limit.get(), paging.offset.get()], |row| {
-                let deleted_column: u8 = row.get(6)?;
+                // let deleted_column: u8 = row.get(6)?;
                 Ok(User {
                     id: row.get(0)?,
                     email: row.get(1)?,
@@ -82,7 +82,7 @@ impl InternalMessage {
                     department: row.get(3)?,
                     permission: row.get(4)?,
                     status: row.get(5)?,
-                    deleted: deleted_column > 0,
+                    // deleted: deleted_column > 0,
                 })
             })?;
 

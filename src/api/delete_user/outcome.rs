@@ -1,6 +1,6 @@
 use crate::{api::MvpError, database::DatabaseConnection, endpoint::Outcome};
 
-use rusqlite::{params,Transaction};
+use rusqlite::{params, Transaction};
 use serde::{Deserialize, Serialize};
 use tide::log;
 
@@ -18,13 +18,13 @@ impl UserId {
 // Outcome definition
 #[derive(Debug, Serialize, Default)]
 pub struct InternalMessage {
-    updated_fields: u16,
+    deleted_rows: u16,
 }
 
 impl From<u16> for InternalMessage {
     fn from(data: u16) -> Self {
         InternalMessage {
-            updated_fields: data,
+            deleted_rows: data,
         }
     }
 }
@@ -58,7 +58,7 @@ impl InternalMessage {
 }
 
 fn db_check_user(tx: &Transaction, id: u16) -> Result<u16, MvpError> {
-    let mut stmt = tx.prepare("SELECT COUNT(*) FROM `users` WHERE id = ?1;")?;
+    let mut stmt = tx.prepare("SELECT COUNT(*) FROM `users` WHERE id = ?1 AND deleted = 0;")?;
 
     let mut found = stmt.query_map(params![id], |row| {
         let rows_found: u16 = row.get(0)?;

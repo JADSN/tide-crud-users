@@ -12,6 +12,7 @@ pub struct User {
     pub email: String,
     pub department: u16,
     pub permission: u16,
+    pub status: u16,
 }
 
 // Outcome definition
@@ -30,7 +31,7 @@ impl TryFrom<Vec<User>> for InternalMessage {
 impl InternalMessage {
     pub fn retrieve_users(db_connection: &DatabaseConnection) -> Result<Vec<User>, MvpError> {
         let conn = db_connection.get()?;
-        let mut stmt = conn.prepare("SELECT * FROM users")?;
+        let mut stmt = conn.prepare("SELECT id, email, name, department, permission, status, deleted FROM `users` WHERE deleted = 0;")?;
         let retrieved_users = stmt.query_map(NO_PARAMS, |row| {
             Ok(User {
                 id: row.get(0)?,
@@ -38,6 +39,7 @@ impl InternalMessage {
                 name: row.get(2)?,
                 department: row.get(3)?,
                 permission: row.get(4)?,
+                status: row.get(5)?,
             })
         })?;
 

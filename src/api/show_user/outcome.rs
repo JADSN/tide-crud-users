@@ -24,7 +24,8 @@ pub struct User {
     pub email: String,
     pub department: u16,
     pub permission: u16,
-    pub deleted: bool,
+    pub status: u16,
+    // pub deleted: bool,
 }
 
 // Outcome definition
@@ -46,16 +47,18 @@ impl InternalMessage {
         user_id: u16,
     ) -> Result<User, MvpError> {
         let conn = db_connection.get()?;
-        let mut stmt = conn.prepare("SELECT * FROM users WHERE id = ?1")?;
+        let mut stmt =
+            conn.prepare("SELECT id, email, name, department, permission, status, deleted FROM `users` WHERE id = ?1 AND deleted = 0;")?;
         let mut retrieved_user = stmt.query_map(params![user_id], |row| {
-            let deleted_column: u8 = row.get(5)?;
+            // let deleted_column: u8 = row.get(5)?;
             Ok(User {
                 id: row.get(0)?,
                 email: row.get(1)?,
                 name: row.get(2)?,
                 department: row.get(3)?,
                 permission: row.get(4)?,
-                deleted: deleted_column > 0,
+                status: row.get(5)?,
+                // deleted: deleted_column > 0,
             })
         })?;
         match retrieved_user.next() {
