@@ -7,7 +7,7 @@ mod endpoint;
 mod internal_endpoints;
 
 use app::App;
-use clap::{crate_authors, crate_description, App as ClapApp};
+use clap::{crate_authors, crate_description, App as ClapApp, Arg as ClapArg};
 use log::LevelFilter;
 use tide::log;
 
@@ -23,12 +23,45 @@ impl App for MyApp {
 
 #[async_std::main]
 async fn main() -> tide::Result<()> {
-    ClapApp::new(MyApp.name())
+    let clap_matches = ClapApp::new(MyApp.name())
         .version(MyApp.version())
         .author(crate_authors!())
         .about(crate_description!())
+        .arg(
+            ClapArg::with_name("ENDPOINTS")
+                .short("e")
+                .long("endpoints")
+                .value_name("FILE")
+                .help("Show endpoint names")
+                .takes_value(false),
+        )
         .get_matches();
 
+    if clap_matches.args.contains_key("ENDPOINTS") {
+        show_endpoints();
+        Ok(())
+    } else {
+        start_tide_server().await
+    }
+}
+
+// TODO: User Journey Map (https://uxplanet.org/a-beginners-guide-to-user-journey-mapping-bd914f4c517c)
+
+fn show_endpoints() {
+    let banner_listen = r#"
+  Internal Endpoints:
+    /                - index_page
+    /maintenance     - maintenance
+    /auth            - check_auth
+  
+  Endpoints:"#;
+    //   banner_listen::banner_listen()
+    println!("{}", banner_listen);
+    // TODO: Implement using build.rs
+    println!(include_str!("../banner_listen.txt"));
+}
+
+async fn start_tide_server() -> tide::Result<()> {
     let addr = "127.0.0.1";
     let port = "8080";
     let listen = format!("{}:{}", addr, port);
@@ -53,24 +86,9 @@ async fn main() -> tide::Result<()> {
     app.at("/api/:endpoint")
         .post(crate::api::dispatcher::handler);
 
-    let banner_listen = r#"
-  Internal Endpoints:
-    /                - index_page
-    /maintenance     - maintenance
-    /auth            - check_auth
-  
-  Endpoints:"#;
-    //   banner_listen::banner_listen()
-    println!("{}", banner_listen);
-    // TODO: Implement using build.rs
-    println!(include_str!("../banner_listen.txt"));
-
     app.listen(listen).await?;
     Ok(())
 }
-
-// TODO: User Journey Map (https://uxplanet.org/a-beginners-guide-to-user-journey-mapping-bd914f4c517c)
-
 
 fn start_tide_log() {
     if let Ok(value) = std::env::var("LOG_LEVEL") {

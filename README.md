@@ -12,14 +12,26 @@ total 4,1M
 
 ## Startup message
 ```
-$ make release run
-./scripts/build.sh
-    Finished release [optimized] target(s) in 0.11s
-'./target/x86_64-unknown-linux-musl/release/tide-crud-users' -> './dist/tide-crud-users'
-./scripts/run.sh
-{"level":30,"time":1617479671289,"msg":"Logger started","level":Info}
-{"level":30,"time":1617479671290,"msg":"Starting App [tide-crud-users v0.3.10]:"}
-{"level":30,"time":1617479671290,"msg":"Server listening on http://127.0.0.1:8080"}
+$ LOG_LEVEL=DEBUG ./tide-crud-users{"level":30,"time":1617734910475,"msg":"Logger started","level":DEBUG}
+{"level":30,"time":1617734910475,"msg":"Starting App [tide-crud-users v0.4.0]:"}
+{"level":30,"time":1617734910478,"msg":"Server listening on http://127.0.0.1:8080"}
+```
+
+## Show endpoints
+```
+$ ./tide-crud-users -e
+  Internal Endpoints:
+    /                - index_page
+    /maintenance     - maintenance
+    /auth            - check_auth
+  
+  Endpoints:
+    /api/add_user - AddUser
+    /api/delete_user - DeleteUser
+    /api/export_users - ExportUsers
+    /api/show_user - ShowUser
+    /api/show_users - ShowUsers
+    /api/update_user - UpdateUser
 ```
 
 ---
