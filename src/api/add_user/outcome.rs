@@ -17,6 +17,12 @@ pub struct NewUser {
 #[derive(Debug, Serialize)]
 pub struct InternalMessage(u16);
 
+impl InternalMessage {
+    pub fn get(self) -> u16 {
+        self.0
+    }
+}
+
 impl Outcome for InternalMessage {}
 
 impl TryFrom<i64> for InternalMessage {

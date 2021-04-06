@@ -14,7 +14,6 @@ impl Model<DatabaseConnection, InternalMessage, MvpError> for UpdateUser {
     ) -> Result<InternalMessage, MvpError> {
         use super::outcome::ParsedUser;
         use crate::endpoint::Name;
-        use std::convert::TryFrom;
         use tide::{log, StatusCode};
 
         let parsed_user: ParsedUser = match serde_json::from_str(&request_body) {
@@ -34,6 +33,6 @@ impl Model<DatabaseConnection, InternalMessage, MvpError> for UpdateUser {
 
         let last_rowid = InternalMessage::db_adduser(db_connection, &parsed_user)?;
         log::info!("User created with id: {:?}", &last_rowid);
-        InternalMessage::try_from(last_rowid)
+        Ok(InternalMessage::from(last_rowid))
     }
 }

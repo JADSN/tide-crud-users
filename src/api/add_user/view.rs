@@ -7,7 +7,17 @@ use crate::{
 };
 
 use super::{outcome::InternalMessage, AddUser};
-
+#[derive(Serialize)]
+struct ResponseBodyOk {
+    id: u16,
+}
+impl From<InternalMessage> for ResponseBodyOk {
+    fn from(data: InternalMessage) -> Self {
+        ResponseBodyOk {
+            id: data.get(),
+        }
+    }
+}
 #[derive(Serialize)]
 struct ResponseBodyError {
     status: String,
@@ -18,7 +28,7 @@ impl View<InternalMessage, MvpError, MvpResult> for AddUser {
     fn view(&self, result: Result<InternalMessage, MvpError>) -> MvpResult {
         match result {
             Ok(outcome) => {
-                let json_body = serde_json_to_string(&outcome).unwrap_or("".to_owned());
+                let json_body = serde_json_to_string(&ResponseBodyOk::from(outcome)).unwrap_or("".to_owned());
                 MvpResult(Ok(Response::builder(StatusCode::Ok)
                     .content_type(mime::JSON)
                     .body(json_body)

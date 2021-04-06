@@ -11,22 +11,22 @@ pub async fn handler(mut request: Request<DatabaseConnection>) -> tide::Result {
     let endpoint = request.param("endpoint")?;
     match endpoint {
         "show_users" => {
-            log::info!("Found: {}", endpoint);
+            log::info!("Endpoint found: {}", endpoint);
             let request_body = request.body_string().await?;
             ShowUsers::handler(ShowUsers, request.state(), &request_body)
         }
         "show_user" => {
-            log::info!("Found: {}", endpoint);
+            log::info!("Endpoint found: {}", endpoint);
             let request_body = request.body_string().await?;
             ShowUser::handler(ShowUser, request.state(), &request_body)
         }
         "add_user" => {
-            log::info!("Found: {}", endpoint);
+            log::info!("Endpoint found: {}", endpoint);
             let request_body = request.body_string().await?;
             AddUser::handler(AddUser, request.state(), &request_body)
         }
         "update_user" => {
-            log::info!("Found: {}", endpoint);
+            log::info!("Endpoint found: {}", endpoint);
             let request_body = request.body_string().await?;
             UpdateUser::handler(UpdateUser, request.state(), &request_body)
         }

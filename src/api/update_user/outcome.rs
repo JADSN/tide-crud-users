@@ -1,5 +1,3 @@
-use std::convert::TryFrom;
-
 use crate::{api::MvpError, database::DatabaseConnection, endpoint::Outcome};
 
 use rusqlite::params;
@@ -38,12 +36,6 @@ impl ParsedUser {
 pub struct InternalMessage {
     updated_fields: u16,
 }
-// impl InternalMessage {
-//     pub fn new() -> Self {
-//         InternalMessage::default()
-
-//     }
-// }
 
 impl From<u16> for InternalMessage {
     fn from(data: u16) -> Self {
@@ -54,36 +46,16 @@ impl From<u16> for InternalMessage {
 }
 impl Outcome for InternalMessage {}
 
-impl TryFrom<i64> for InternalMessage {
-    type Error = MvpError;
-
-    fn try_from(value: i64) -> Result<Self, Self::Error> {
-        use std::convert::TryInto;
-        let id: u16 = value.try_into()?;
-        Ok(InternalMessage::from(id))
-    }
-}
-
 impl InternalMessage {
     pub fn db_adduser(
         db_connection: &DatabaseConnection,
         parsed_user: &ParsedUser,
-    ) -> Result<i64, MvpError> {
+    ) -> Result<u16, MvpError> {
         let mut conn = db_connection.get()?;
 
-        let mut affected_fields = 0;
+        let mut affected_fields: u16 = 0;
 
         let tx = conn.transaction()?;
-
-        // tx.execute(
-        //     "INSERT INTO users (email, name, department, permission) VALUES (?1, ?2, ?3, ?4)",
-        //     params![
-        //         new_user.email,
-        //         new_user.name,
-        //         new_user.department,
-        //         new_user.permission
-        //     ],
-        // )?;
 
         if let Some(email) = parsed_user.email() {
             let id = parsed_user.id();
