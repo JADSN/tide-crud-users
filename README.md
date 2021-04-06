@@ -5,9 +5,11 @@ Just a Rust CRUD powered by rusSQLite, r2d2_sqlite and tide-rs.
 ## Lean artifact (< 10 MB)
 The whole artifact is built with static compiling using **MUSL** target.
 ```
-$ ls -lh
-total 4,1M
--rwxrwxr-x 1 user user 4,1M abr  3 16:54 tide-crud-users
+$ ls -lh ./dist/                                  
+total 4,2M                                                                                    
+-rw-r--r-- 1 user user  16K abr  6 15:36 database.sqlite3
+-rwxrwxr-x 1 user user 4,2M abr  6 15:52 tide-crud-users
+$
 ```
 
 ## Startup message
