@@ -8,6 +8,7 @@ mod internal_endpoints;
 
 use app::App;
 use clap::{crate_authors, crate_description, App as ClapApp};
+use log::LevelFilter;
 use tide::log;
 
 struct MyApp;
@@ -32,7 +33,7 @@ async fn main() -> tide::Result<()> {
     let port = "8080";
     let listen = format!("{}:{}", addr, port);
 
-    log::start();
+    start_tide_log();
 
     log::info!("Starting App [{} v{}]:", MyApp.name(), MyApp.version());
 
@@ -59,7 +60,7 @@ async fn main() -> tide::Result<()> {
     /auth            - check_auth
   
   Endpoints:"#;
-//   banner_listen::banner_listen()
+    //   banner_listen::banner_listen()
     println!("{}", banner_listen);
     // TODO: Implement using build.rs
     println!(include_str!("../banner_listen.txt"));
@@ -69,3 +70,20 @@ async fn main() -> tide::Result<()> {
 }
 
 // TODO: User Journey Map (https://uxplanet.org/a-beginners-guide-to-user-journey-mapping-bd914f4c517c)
+
+
+fn start_tide_log() {
+    if let Ok(value) = std::env::var("LOG_LEVEL") {
+        let loglevel = match value.as_str() {
+            "DEBUG" => LevelFilter::Debug,
+            "ERROR" => LevelFilter::Error,
+            "INFO" => LevelFilter::Info,
+            "TRACE" => LevelFilter::Trace,
+            "WARN" => LevelFilter::Warn,
+            _ => LevelFilter::Off,
+        };
+        log::with_level(loglevel);
+    } else {
+        log::start();
+    }
+}

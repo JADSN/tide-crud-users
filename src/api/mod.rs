@@ -7,6 +7,7 @@ mod show_users;
 mod export_users;
 mod show_user;
 mod update_user;
+mod delete_user;
 
 // * Endpoint modules - END
 
@@ -54,7 +55,7 @@ impl From<r2d2::Error> for MvpError {
 
 impl Into<tide::Error> for MvpError {
     fn into(self) -> tide::Error {
-        tide::Error::from_str(tide::StatusCode::InternalServerError, self.take_error())
+        tide::Error::from_str(tide::StatusCode::Conflict, self.take_error())
     }
 }
 

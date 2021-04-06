@@ -26,11 +26,12 @@ impl DatabaseConnection {
             "email"	TEXT NOT NULL,
             "name"	TEXT NOT NULL,
             "department"	INTEGER NOT NULL,
-            "permission"	INTEGER NOT NULL
+            "permission"	INTEGER NOT NULL,
+            "deleted" INTEGER NOT NULL
         );
-        INSERT INTO `users` ("email","name","department","permission") VALUES ('root@example.net','Charlie Root',1,1);
-        INSERT INTO `users` ("email","name","department","permission") VALUES ('admin@example.net','Administrator',1,2);
-        INSERT INTO `users` ("email","name","department","permission") VALUES ('staff@example.net','Staff',1,3);
+        INSERT INTO `users` ("email","name","department","permission","deleted") VALUES ('root@example.net','Charlie Root',1,1,0);
+        INSERT INTO `users` ("email","name","department","permission","deleted") VALUES ('admin@example.net','Administrator',1,2,0);
+        INSERT INTO `users` ("email","name","department","permission","deleted") VALUES ('staff@example.net','Staff',1,3,0);
     "#,
     )?;
         }

@@ -48,6 +48,7 @@ pub struct User {
     pub email: String,
     pub department: u16,
     pub permission: u16,
+    pub deleted: bool
 }
 
 // Outcome definition
@@ -72,12 +73,14 @@ impl InternalMessage {
         let mut stmt = conn.prepare("SELECT * FROM users LIMIT ?1 OFFSET ?2")?;
         let retrieved_users =
             stmt.query_map(params![paging.limit.get(), paging.offset.get()], |row| {
+                let deleted_column: u8 = row.get(5)?;
                 Ok(User {
                     id: row.get(0)?,
                     email: row.get(1)?,
                     name: row.get(2)?,
                     department: row.get(3)?,
                     permission: row.get(4)?,
+                    deleted: deleted_column > 0,
                 })
             })?;
 

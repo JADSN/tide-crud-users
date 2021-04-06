@@ -3,7 +3,7 @@ use tide::{log, Request, Response, StatusCode};
 use crate::{
     api::{
         add_user::AddUser, export_users::ExportUsers, show_user::ShowUser, show_users::ShowUsers,
-        update_user::UpdateUser,
+        update_user::UpdateUser,delete_user::DeleteUser
     },
     database::DatabaseConnection,
     endpoint::Handler,
@@ -37,6 +37,11 @@ pub async fn handler(mut request: Request<DatabaseConnection>) -> tide::Result {
             log::info!("Endpoint found: {}", endpoint);
             let request_body = request.body_string().await?;
             UpdateUser::handler(UpdateUser, request.state(), &request_body)
+        }
+        "delete_user" => {
+            log::info!("Endpoint found: {}", endpoint);
+            let request_body = request.body_string().await?;
+            DeleteUser::handler(DeleteUser, request.state(), &request_body)
         }
         _ => {
             log::warn!("Not found: {}", endpoint);
