@@ -16,6 +16,8 @@ impl Model<DatabaseConnection, InternalMessage, MvpError> for ShowUsers {
         use std::convert::TryFrom;
         use tide::{log, StatusCode};
         match request_body.as_str() {
+            // TODO: Add paginator (Check dbeaver)
+            // TODO: Current endpoint could be export_users
             "{}" => {
                 let retrieved_users = InternalMessage::retrieve_users(db_connection)?;
                 log::info!("Found [{}] users!", retrieved_users.len());
