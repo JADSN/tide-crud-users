@@ -4,6 +4,7 @@ mod api;
 mod app;
 mod database;
 mod endpoint;
+mod frontend_endpoints;
 mod internal_endpoints;
 
 use app::App;
@@ -67,7 +68,7 @@ async fn start_tide_server() -> tide::Result<()> {
     #[cfg(not(debug_assertions))]
     let addr = "0.0.0.0";
     let mut port: String = "8080".into();
-    
+
     if let Ok(value) = std::env::var("PORT") {
         let port_number = value.parse::<u16>()?;
         port = port_number.to_string();
@@ -86,8 +87,30 @@ async fn start_tide_server() -> tide::Result<()> {
 
     let mut app = tide::with_state(database_connection);
 
+    // * Frontend - BEGIN
+    app.at("/favicon.ico")
+        .get(crate::frontend_endpoints::favicon::handler);
+
     app.at("/")
-        .get(crate::internal_endpoints::index_page::handler);
+        .get(crate::frontend_endpoints::index_page::handler);
+
+    app.at("/js/main.js")
+        .get(crate::frontend_endpoints::main_js::handler);
+
+    app.at("/css/style.css")
+        .get(crate::frontend_endpoints::style_css::handler);
+
+    app.at("/css/uikit.min.css")
+        .get(crate::frontend_endpoints::uikit_css::handler);
+
+    app.at("/js/uikit-icons.min.js")
+        .get(crate::frontend_endpoints::uikit_icons_min_js::handler);
+
+    app.at("/js/uikit.min.js")
+        .get(crate::frontend_endpoints::uikit_js::handler);
+
+    // * Frontend - END
+
     app.at("/maintenance")
         .patch(crate::internal_endpoints::maintenance_mode::handler);
     app.at("/auth")
