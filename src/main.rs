@@ -62,7 +62,10 @@ fn show_endpoints() {
 }
 
 async fn start_tide_server() -> tide::Result<()> {
+    #[cfg(debug_assertions)]
     let addr = "127.0.0.1";
+    #[cfg(not(debug_assertions))]
+    let addr = "0.0.0.0";
     let mut port: String = "8080".into();
     
     if let Ok(value) = std::env::var("PORT") {
