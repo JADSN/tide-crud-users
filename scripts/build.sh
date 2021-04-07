@@ -1,10 +1,10 @@
 #!/bin/bash
 
-for module in $(find ./src/api/* -type d)
-do
-   printf "    $module - "
-   awk '/pub struct/ { print $3 }' $module/mod.rs
-done | tr -d ';' | sed "s/.\/src//g" > ./banner_listen.txt
+# for module in $(find ./src/api/* -type d)
+# do
+#    printf "    $module - "
+#    awk '/pub struct/ { print $3 }' $module/mod.rs
+# done | tr -d ';' | sed "s/.\/src//g" > ./banner_listen.txt
 
 
 mkdir -p ./dist

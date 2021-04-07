@@ -49,17 +49,15 @@ async fn main() -> tide::Result<()> {
 // TODO: User Journey Map (https://uxplanet.org/a-beginners-guide-to-user-journey-mapping-bd914f4c517c)
 
 fn show_endpoints() {
-    let banner_listen = r#"
+    let endpoints_header = r#"
   Internal Endpoints:
     /                - index_page
     /maintenance     - maintenance
     /auth            - check_auth
   
   Endpoints:"#;
-    //   banner_listen::banner_listen()
-    println!("{}", banner_listen);
-    // TODO: Implement using build.rs
-    println!(include_str!("../banner_listen.txt"));
+    println!("{}", endpoints_header);
+    println!(include_str!("../endpoints_found.txt"));
 }
 
 async fn start_tide_server() -> tide::Result<()> {
