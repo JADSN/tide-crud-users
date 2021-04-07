@@ -29,9 +29,8 @@ fn print_endpoints(endpoints: Vec<PathBuf>) -> io::Result<()> {
                 for cap in re.captures_iter(line_str) {
                     let endpoint_str = endpoint.as_os_str().to_str().unwrap_or("");
                     let endpoint_vec = endpoint_str.split("/").collect::<Vec<&str>>();
-
                     let endpoint_str_line =
-                        format!("    /api/{} - {}\n", endpoint_vec[5], &cap[1]);
+                        format!("    /api/{} - {}\n", endpoint_vec[7], &cap[1]);
                     output_file_fd.write_all(endpoint_str_line.as_bytes())?;
                 }
             }
