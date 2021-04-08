@@ -27,7 +27,7 @@ impl DatabaseConnection {
             "department"	INTEGER NOT NULL,
             "permission"	INTEGER NOT NULL,
             "status"	INTEGER NOT NULL,
-            "deleted" INTEGER NOT NULL
+            "deleted" BOOLEAN NOT NULL
         );
         INSERT INTO `users` ("email","name","department","permission","status","deleted") VALUES ('root@example.net','Charlie Root',1,1,1,0);
         INSERT INTO `users` ("email","name","department","permission","status","deleted") VALUES ('admin@example.net','Administrator',1,2,1,0);
@@ -42,7 +42,7 @@ impl DatabaseConnection {
         CREATE TABLE `departments` (
             "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
             "name"	TEXT NOT NULL,
-            "deleted" INTEGER NOT NULL
+            "deleted" BOOLEAN NOT NULL
         );
         INSERT INTO `departments` ("id","name","deleted") VALUES (1,'IT',0);
         INSERT INTO `departments` ("id","name","deleted") VALUES (2,'Accounting',0);
@@ -58,7 +58,7 @@ impl DatabaseConnection {
         CREATE TABLE `permissions` (
             "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
             "name"	TEXT NOT NULL,
-            "deleted" INTEGER NOT NULL
+            "deleted" BOOLEAN NOT NULL
         );
         INSERT INTO `permissions` ("id","name","deleted") VALUES (1,'Administrator',0);
         INSERT INTO `permissions` ("id","name","deleted") VALUES (2,'Technical',0);
@@ -74,7 +74,7 @@ impl DatabaseConnection {
         CREATE TABLE `statuses` (
             "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
             "name"	TEXT NOT NULL,
-            "deleted" INTEGER NOT NULL
+            "deleted" BOOLEAN NOT NULL
         );
         INSERT INTO `statuses` ("id","name","deleted") VALUES (1,'Enabled',0);
         INSERT INTO `statuses` ("id","name","deleted") VALUES (2,'Disabled',0);
