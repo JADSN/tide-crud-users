@@ -13,27 +13,9 @@ impl DatabaseConnection {
         let conn = self.get()?;
         conn.busy_timeout(Duration::from_secs(5))?;
 
-        conn.execute_batch("PRAGMA journal_mode=WAL")?;
-        conn.execute_batch("PRAGMA foreign_keys=ON")?;
-        if let Err(error) = conn.execute_batch("SELECT COUNT(*) from `users`") {
-            tide::log::warn!("{}", error);
-            tide::log::warn!("Creating tables `users`");
-            conn.execute_batch(
-        r#"
-        CREATE TABLE `users` (
-            "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-            "email"	TEXT NOT NULL,
-            "name"	TEXT NOT NULL,
-            "department"	INTEGER NOT NULL,
-            "permission"	INTEGER NOT NULL,
-            "status"	INTEGER NOT NULL,
-            "deleted" BOOLEAN NOT NULL
-        );
-        INSERT INTO `users` ("email","name","department","permission","status","deleted") VALUES ('root@example.net','Charlie Root',1,1,1,0);
-        INSERT INTO `users` ("email","name","department","permission","status","deleted") VALUES ('admin@example.net','Administrator',1,2,1,0);
-        INSERT INTO `users` ("email","name","department","permission","status","deleted") VALUES ('staff@example.net','Staff',1,3,1,0);
-        "#)?;
-        }
+        // conn.execute_batch("PRAGMA journal_mode=WAL")?;
+        // conn.execute_batch("PRAGMA foreign_keys=ON")?;
+
         if let Err(error) = conn.execute_batch("SELECT COUNT(*) from `departments`") {
             tide::log::warn!("{}", error);
             tide::log::warn!("Creating tables `departments`");
@@ -83,6 +65,29 @@ impl DatabaseConnection {
             )?;
         }
 
+        if let Err(error) = conn.execute_batch("SELECT COUNT(*) from `users`") {
+            tide::log::warn!("{}", error);
+            tide::log::warn!("Creating tables `users`");
+            conn.execute_batch(
+        r#"
+        CREATE TABLE `users` (
+            "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+            "email"	TEXT NOT NULL,
+            "name"	TEXT NOT NULL,
+            "department"	INTEGER NOT NULL,
+            "permission"	INTEGER NOT NULL,
+            "status"	INTEGER NOT NULL,
+            "deleted" BOOLEAN NOT NULL,
+			FOREIGN KEY(department) REFERENCES departments(id)
+			FOREIGN KEY(permission) REFERENCES permissions(id)
+			FOREIGN KEY(status) REFERENCES statuses(id)
+        );
+        INSERT INTO `users` ("email","name","department","permission","status","deleted") VALUES ('root@example.net','Charlie Root',1,1,1,0);
+        INSERT INTO `users` ("email","name","department","permission","status","deleted") VALUES ('admin@example.net','Administrator',1,2,1,0);
+        INSERT INTO `users` ("email","name","department","permission","status","deleted") VALUES ('staff@example.net','Staff',1,3,1,0);
+        "#)?;
+        }
+
         // TODO: Check if PRAGMAs was applied
         assert!(conn.is_autocommit());
         Ok(())
@@ -92,7 +97,10 @@ impl DatabaseConnection {
         const DB_FILE: &str = "database.sqlite3";
         const MAX_THREADS: u32 = 1;
 
-        let manager = r2d2_sqlite::SqliteConnectionManager::file(DB_FILE);
+        let manager = r2d2_sqlite::SqliteConnectionManager::file(DB_FILE).with_init(|c| {
+            c.execute_batch("PRAGMA journal_mode=WAL")?;
+            c.execute_batch("PRAGMA foreign_keys=ON;")
+        });
         // let manager = r2d2_sqlite::SqliteConnectionManager::memory();
         let db_conn =
             DatabaseConnection(r2d2::Pool::builder().max_size(MAX_THREADS).build(manager)?);

@@ -45,14 +45,14 @@ impl EndpointError for MvpError {}
 impl From<rusqlite::Error> for MvpError {
     fn from(err: rusqlite::Error) -> Self {
         log::info!("Error Triggered from [rusqlite::Error]");
-        MvpError(tide::Error::from(err))
+        MvpError(tide::Error::from_str(tide::StatusCode::Conflict, err.to_string()))
     }
 }
 
 impl From<r2d2::Error> for MvpError {
     fn from(err: r2d2::Error) -> Self {
         log::info!("Error Triggered from [r2d2::Error]");
-        MvpError(tide::Error::from(err))
+        MvpError(tide::Error::from_str(tide::StatusCode::Conflict, err.to_string()))
     }
 }
 
@@ -65,7 +65,7 @@ impl Into<tide::Error> for MvpError {
 impl From<TryFromIntError> for MvpError {
     fn from(err: TryFromIntError) -> Self {
         log::info!("Error Triggered from [r2d2::Error]");
-        MvpError(tide::Error::from(err))
+        MvpError(tide::Error::from_str(tide::StatusCode::Conflict, err.to_string()))
     }
 }
 
