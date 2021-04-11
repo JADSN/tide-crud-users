@@ -4,15 +4,11 @@ use rusqlite::{params, Transaction};
 use serde::{Deserialize, Serialize};
 use tide::log;
 
-#[derive(Debug, Deserialize)]
-pub struct UserId {
-    id: u16,
-}
+use crate::models::users::UserId;
 
-impl UserId {
-    pub fn get(&self) -> u16 {
-        self.id
-    }
+#[derive(Debug, Deserialize)]
+pub struct User {
+    id: UserId,
 }
 
 // Outcome definition
@@ -23,9 +19,7 @@ pub struct InternalMessage {
 
 impl From<u16> for InternalMessage {
     fn from(data: u16) -> Self {
-        InternalMessage {
-            deleted_rows: data,
-        }
+        InternalMessage { deleted_rows: data }
     }
 }
 impl Outcome for InternalMessage {}
@@ -33,12 +27,12 @@ impl Outcome for InternalMessage {}
 impl InternalMessage {
     pub fn db_delete_user(
         db_connection: &DatabaseConnection,
-        user_id: &UserId,
+        user: &User,
     ) -> Result<u16, MvpError> {
         use std::convert::TryInto;
         let mut conn = db_connection.get()?;
         let tx = conn.transaction()?;
-        let id = user_id.get();
+        let id = user.id.get();
 
         if db_check_user(&tx, id)? > 0 {
             log::debug!("Deleting row with id = {}", id);

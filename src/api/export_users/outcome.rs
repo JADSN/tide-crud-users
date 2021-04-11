@@ -1,18 +1,20 @@
 use std::convert::TryFrom;
 
-use rusqlite::NO_PARAMS;
 use serde::{Deserialize, Serialize};
 
 use crate::{api::MvpError, database::DatabaseConnection, endpoint::Outcome};
 
+use crate::models::users::{
+    UserDepartment, UserEmail, UserId, UserName, UserPermission, UserStatus,
+};
 #[derive(Debug, Serialize, Deserialize)]
 pub struct User {
-    pub id: u16,
-    pub name: String,
-    pub email: String,
-    pub department: u16,
-    pub permission: u16,
-    pub status: u16,
+    id: UserId,
+    name: UserName,
+    email: UserEmail,
+    department: UserDepartment,
+    permission: UserPermission,
+    status: UserStatus,
 }
 
 // Outcome definition
@@ -32,14 +34,14 @@ impl InternalMessage {
     pub fn retrieve_users(db_connection: &DatabaseConnection) -> Result<Vec<User>, MvpError> {
         let conn = db_connection.get()?;
         let mut stmt = conn.prepare("SELECT id, email, name, department, permission, status, deleted FROM `users` WHERE deleted = 0;")?;
-        let retrieved_users = stmt.query_map(NO_PARAMS, |row| {
+        let retrieved_users = stmt.query_map([], |row| {
             Ok(User {
-                id: row.get(0)?,
-                email: row.get(1)?,
-                name: row.get(2)?,
-                department: row.get(3)?,
-                permission: row.get(4)?,
-                status: row.get(5)?,
+                id: UserId::new(row.get(0)?),
+                email: UserEmail::new(row.get(1)?),
+                name: UserName::new(row.get(2)?),
+                department: UserDepartment::new(row.get(3)?),
+                permission: UserPermission::new(row.get(4)?),
+                status: UserStatus::new(row.get(5)?),
             })
         })?;
 

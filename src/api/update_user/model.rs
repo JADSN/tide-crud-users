@@ -29,9 +29,7 @@ impl Model<DatabaseConnection, InternalMessage, MvpError> for UpdateUser {
             }
         };
 
-        dbg!(&parsed_user);
-
-        let last_rowid = InternalMessage::db_adduser(db_connection, &parsed_user)?;
+        let last_rowid = InternalMessage::db_updateuser(db_connection, &parsed_user)?;
         log::info!("User created with id: {:?}", &last_rowid);
         Ok(InternalMessage::from(last_rowid))
     }

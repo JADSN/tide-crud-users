@@ -4,28 +4,26 @@ use rusqlite::params;
 use serde::{Deserialize, Serialize};
 use tide::{Error as TideError, StatusCode};
 
-use crate::{api::MvpError, database::DatabaseConnection, endpoint::Outcome};
+use crate::{
+    api::MvpError,
+    database::DatabaseConnection,
+    endpoint::Outcome,
+    models::users::{UserDepartment, UserEmail, UserId, UserName, UserPermission, UserStatus},
+};
 
-#[derive(Debug, Deserialize)]
-pub struct UserId {
-    id: u16,
+#[derive(Debug, Serialize, Deserialize)]
+pub struct QueryUserById {
+    pub id: UserId,
 }
 
-impl UserId {
-    pub fn id(&self) -> u16 {
-        self.id
-    }
-}
-
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct User {
-    pub id: u16,
-    pub name: String,
-    pub email: String,
-    pub department: u16,
-    pub permission: u16,
-    pub status: u16,
-    // pub deleted: bool,
+    id: UserId,
+    name: UserName,
+    email: UserEmail,
+    department: UserDepartment,
+    permission: UserPermission,
+    status: UserStatus,
 }
 
 // Outcome definition
@@ -50,15 +48,13 @@ impl InternalMessage {
         let mut stmt =
             conn.prepare("SELECT id, email, name, department, permission, status, deleted FROM `users` WHERE id = ?1 AND deleted = 0;")?;
         let mut retrieved_user = stmt.query_map(params![user_id], |row| {
-            // let deleted_column: u8 = row.get(5)?;
             Ok(User {
-                id: row.get(0)?,
-                email: row.get(1)?,
-                name: row.get(2)?,
-                department: row.get(3)?,
-                permission: row.get(4)?,
-                status: row.get(5)?,
-                // deleted: deleted_column > 0,
+                id: UserId::new(row.get(0)?),
+                email: UserEmail::new(row.get(1)?),
+                name: UserName::new(row.get(2)?),
+                department: UserDepartment::new(row.get(3)?),
+                permission: UserPermission::new(row.get(4)?),
+                status: UserStatus::new(row.get(5)?),
             })
         })?;
         match retrieved_user.next() {

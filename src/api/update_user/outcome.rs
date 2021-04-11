@@ -1,48 +1,51 @@
 use crate::{api::MvpError, database::DatabaseConnection, endpoint::Outcome};
 
+use crate::models::users::{
+    UserDepartment, UserEmail, UserId, UserName, UserPermission, UserStatus,
+};
 use rusqlite::{params, Transaction};
 use serde::{Deserialize, Serialize};
 use tide::log;
 
 #[derive(Debug, Deserialize)]
 pub struct ParsedUser {
-    id: u16,
-    name: Option<String>,
-    email: Option<String>,
-    department: Option<u16>,
-    permission: Option<u16>,
-    status: Option<u16>,
+    id: UserId,
+    name: Option<UserName>,
+    email: Option<UserEmail>,
+    department: Option<UserDepartment>,
+    permission: Option<UserPermission>,
+    status: Option<UserStatus>,
 }
 
 impl ParsedUser {
-    pub fn id(&self) -> u16 {
-        self.id
+    pub fn id(&self) -> UserId {
+        self.id.clone()
     }
-    pub fn name(&self) -> Option<String> {
+    pub fn name(&self) -> Option<UserName> {
         self.name.clone()
     }
-    pub fn email(&self) -> Option<String> {
+    pub fn email(&self) -> Option<UserEmail> {
         self.email.clone()
     }
-    pub fn department(&self) -> Option<u16> {
-        self.department
+    pub fn department(&self) -> Option<UserDepartment> {
+        self.department.clone()
     }
-    pub fn permission(&self) -> Option<u16> {
-        self.permission
+    pub fn permission(&self) -> Option<UserPermission> {
+        self.permission.clone()
     }
-    pub fn status(&self) -> Option<u16> {
-        self.status
+    pub fn status(&self) -> Option<UserStatus> {
+        self.status.clone()
     }
 }
 
 // Outcome definition
 #[derive(Debug, Serialize, Default)]
 pub struct InternalMessage {
-    updated_fields: u16,
+    updated_fields: u8,
 }
 
-impl From<u16> for InternalMessage {
-    fn from(data: u16) -> Self {
+impl From<u8> for InternalMessage {
+    fn from(data: u8) -> Self {
         InternalMessage {
             updated_fields: data,
         }
@@ -51,18 +54,20 @@ impl From<u16> for InternalMessage {
 impl Outcome for InternalMessage {}
 
 impl InternalMessage {
-    pub fn db_adduser(
+    pub fn db_updateuser(
         db_connection: &DatabaseConnection,
         parsed_user: &ParsedUser,
-    ) -> Result<u16, MvpError> {
+    ) -> Result<u8, MvpError> {
         let mut conn = db_connection.get()?;
-        let id = parsed_user.id();
-        let mut affected_fields: u16 = 0;
+        let id = parsed_user.id().get();
+        let mut affected_fields: u8 = 0;
 
         let tx = conn.transaction()?;
+        // * Check if user exists
         if db_check_user(&tx, id)? > 0 {
             if let Some(email) = parsed_user.email() {
-                let id = parsed_user.id();
+                let id = parsed_user.id().get();
+                let email = email.get();
                 log::debug!("Updating field: id = {} email = {}", id, &email);
                 tx.execute(
                     "UPDATE `users` SET email = ?2 WHERE id = ?1;",
@@ -72,7 +77,8 @@ impl InternalMessage {
             }
 
             if let Some(name) = parsed_user.name() {
-                let id = parsed_user.id();
+                let id = parsed_user.id().get();
+                let name = name.get();
                 log::debug!("Updating field: id = {} name = {}", id, &name);
                 tx.execute(
                     "UPDATE `users` SET name = ?2 WHERE id = ?1;",
@@ -82,31 +88,34 @@ impl InternalMessage {
             }
 
             if let Some(department) = parsed_user.department() {
-                let id = parsed_user.id();
+                let id = parsed_user.id().get();
+                let department = department.get();
                 log::debug!("Updating field: id = {} department = {}", id, &department);
                 tx.execute(
                     "UPDATE `users` SET department = ?2 WHERE id = ?1;",
-                    params![parsed_user.id(), department],
+                    params![id, department],
                 )?;
                 affected_fields += 1;
             }
 
             if let Some(permission) = parsed_user.permission() {
-                let id = parsed_user.id();
+                let id = parsed_user.id().get();
+                let permission = permission.get();
                 log::debug!("Updating field: id = {} permission = {}", id, &permission);
                 tx.execute(
                     "UPDATE `users` SET permission = ?2 WHERE id = ?1;",
-                    params![parsed_user.id(), permission],
+                    params![id, permission],
                 )?;
                 affected_fields += 1;
             }
 
             if let Some(status) = parsed_user.status() {
-                let id = parsed_user.id();
+                let id = parsed_user.id().get();
+                let status = status.get();
                 log::debug!("Updating field: id = {} status = {}", id, &status);
                 tx.execute(
                     "UPDATE `users` SET status = ?2 WHERE id = ?1;",
-                    params![parsed_user.id(), status],
+                    params![id, status],
                 )?;
                 affected_fields += 1;
             }

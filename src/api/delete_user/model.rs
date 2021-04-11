@@ -12,11 +12,11 @@ impl Model<DatabaseConnection, InternalMessage, MvpError> for DeleteUser {
         db_connection: &DatabaseConnection,
         request_body: &String,
     ) -> Result<InternalMessage, MvpError> {
-        use super::outcome::UserId;
+        use super::outcome::User;
         use crate::endpoint::Name;
         use tide::{log, StatusCode};
 
-        let parsed_userid: UserId = match serde_json::from_str(&request_body) {
+        let parsed_userid: User = match serde_json::from_str(&request_body) {
             Ok(parsed_userid) => parsed_userid,
             Err(_) => {
                 // * Security: Custom error to verify if system is under attack.

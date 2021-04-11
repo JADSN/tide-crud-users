@@ -5,28 +5,20 @@ use crate::{api::MvpError, database::DatabaseConnection, endpoint::Outcome};
 use rusqlite::params;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize)]
+use crate::models::users::{
+    UserDepartment, UserEmail, UserName, UserPermission, UserStatus,
+};
+
+#[derive(Debug, Serialize, Deserialize)]
 pub struct NewUser {
-    name: String,
-    email: String,
-    department: u16,
-    permission: u16,
+    name: UserName,
+    email: UserEmail,
+    department: UserDepartment,
+    permission: UserPermission,
     #[serde(skip_deserializing, default)]
     status: UserStatus,
 }
 
-#[derive(Debug, Deserialize)]
-pub struct UserStatus(u16);
-impl Default for UserStatus {
-    fn default() -> Self {
-        UserStatus(1)
-    }
-}
-impl UserStatus {
-    fn get(&self) -> u16 {
-        self.0
-    }
-}
 // Outcome definition
 #[derive(Debug, Serialize)]
 pub struct InternalMessage(u16);
@@ -60,10 +52,10 @@ impl InternalMessage {
         tx.execute(
             "INSERT INTO users (email, name, department, permission, status, deleted ) VALUES (?1, ?2, ?3, ?4, ?5, 0)",
             params![
-                new_user.email,
-                new_user.name,
-                new_user.department,
-                new_user.permission,
+                new_user.email.get(),
+                new_user.name.get(),
+                new_user.department.get(),
+                new_user.permission.get(),
                 new_user.status.get()
             ],
         )?;

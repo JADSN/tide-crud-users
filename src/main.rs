@@ -6,6 +6,7 @@ mod database;
 mod endpoint;
 mod frontend_endpoints;
 mod internal_endpoints;
+mod models;
 mod web_server;
 
 use app::App;
@@ -61,5 +62,3 @@ fn show_endpoints() {
     println!("{}", endpoints_header);
     println!(include_str!("../endpoints_found.txt"));
 }
-
-

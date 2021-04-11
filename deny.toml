@@ -201,7 +201,7 @@ allow-registry = ["https://github.com/rust-lang/crates.io-index"]
 
 [sources.allow-org]
 # 1 or more github.com organizations to allow git sources for
-github = ["afsec"]
+# github = ["afsec"]
 # 1 or more gitlab.com organizations to allow git sources for
 # gitlab = [""]
 # 1 or more bitbucket.org organizations to allow git sources for
