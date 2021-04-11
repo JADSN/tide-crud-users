@@ -36,8 +36,8 @@ impl TryFrom<i64> for InternalMessage {
 
     fn try_from(value: i64) -> Result<Self, Self::Error> {
         use std::convert::TryInto;
-        let id = value.try_into()?;
-        Ok(InternalMessage(id))
+        let new_id = value.try_into()?;
+        Ok(InternalMessage(new_id))
     }
 }
 
