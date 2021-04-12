@@ -134,14 +134,5 @@ impl InternalMessage {
 
 fn db_check_user(tx: &Transaction, id: u16) -> Result<u16, MvpError> {
     let mut stmt = tx.prepare("SELECT COUNT(*) FROM `users` WHERE id = ?1 AND deleted = 0;")?;
-
-    let found = stmt.query_row(params![id], |r| r.get::<_, u16>(0));
-
-    match found {
-        Ok(found) => Ok(found),
-        Err(error) => {
-            tide::log::warn!("{}", error);
-            Ok(0)
-        }
-    }
+    Ok(stmt.query_row(params![id], |r| r.get::<_, u16>(0))?)
 }
